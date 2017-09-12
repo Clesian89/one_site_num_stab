@@ -256,11 +256,6 @@ do i=1,N
 enddo 
 endsubroutine generate_FR
 
-subroutine matvect(A,v,Av,n)
-integer(kind=i4)::n
-real(kind=r8)::A(N,N),v(N),Av(n),y(n)  
-call sgemv('N',n,n,1.0,A,n,v,1,0.0,Av,1)   
-endsubroutine matvect  
 
 
 

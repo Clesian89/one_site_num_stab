@@ -17,7 +17,8 @@ real(kind=r8)::mu,U,beta
 real(kind=r8)::Ku(2,2),Kc(2,2),R(2,2),av(2)
 real(kind=r8)::M_mat(2,2),v(2),Q(2,2)
 real(kind=r8)::E(2),e_r(2),e_i(2),R_temp(2,2) 
-real(kind=r8)::FR(2,2),L_sys(2,2),L1(2,2),L2(2,2),L3(2,2)     
+real(kind=r8)::FR(2,2),L_sys(2,2),L1(2,2),L2(2,2),L3(2,2) 
+real(kind=r8)::inhom(2),solu(2)    
 !Dummy variable 
 integer(kind=i4)::i,j
 
@@ -28,7 +29,7 @@ integer(kind=i4)::i,j
 !
 !-----------------------------------------
 U=10
-mu=1
+mu=11
 beta=500 
 
 
@@ -81,21 +82,31 @@ write(*,*) "the matrix Q"
 call generate_Q(Q,Kc,E,beta,mu,2)
 call generate_FR(FR,R,E,beta,mu,2) 
 call mprint(Q,2)
-write(*,*) "the matrix FR"
-call mprint(FR,2) 
+!Generate the matrix for the linear system
 L1=R 
 L2=matmul(FR,M_mat) 
 L3=matmul(Q,matmul(R,M_mat)) 
+write(*,*) "DEBUGGING"
+write(*,*) "The matrix Q"
+call mprint(Q,2)
+write(*,*) "the matrix FR"
+call mprint(FR,2) 
+write(*,*) "The matrix L1"
+call mprint(L1,2)
+write(*,*) "The matrix L2"
+call mprint(L2,2)
+write(*,*) "The matrix L3"
+call mprint(L3,2)  
+
 L_sys=L1-L2-L3
-write(*,*) "check the matmul if it works with vector" 
-call mprint(M_mat,2) 
-write(*,*) "chekc the vector matrix multiplication"
-call matvect(M_mat,v,e_i,2) 
+!Generate the inhomugenuous ter
+inhom=matmul(FR,v) 
+inhom=inhom+matmul(Q,matmul(R,v)) 
+call solve_linear_system(L_sys,inhom,solu,2)
+write(*,*) "There is the vector solut 1->n 2->d"
 do i=1,2
-	write(*,*) i,e_i(i) 
+	write(*,*)i,solu(i)
 enddo
-
-
 
 
 
